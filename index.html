@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Multicultural Night Voting</title>
+  <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 40px;
+    }
+    .song {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .vote-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+    }
+    .vote-button:active {
+      transform: translateY(2px);
+      background-color: #0056b3;
+    }
+    .vote-button:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+    .vote-count {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎤 Multicultural Night Voting</h1>
+  <div id="songList"></div>
+
+  <script>
+    const songs = [
+      { id: "song1", title: "We Are the World", artist: "USA for Africa" },
+      { id: "song2", title: "Despacito", artist: "Luis Fonsi" },
+      { id: "song3", title: "Jai Ho", artist: "A. R. Rahman" }
+    ];
+
+    function getVoteCount(songId) {
+      return parseInt(localStorage.getItem("votes_" + songId) || "0");
+    }
+
+    function setVoteCount(songId, count) {
+      localStorage.setItem("votes_" + songId, count.toString());
+    }
+
+    const songListDiv = document.getElementById("songList");
+
+    songs.forEach(song => {
+      const voteCount = getVoteCount(song.id);
+
+      const container = document.createElement("div");
+      container.className = "song";
+
+      const titleHTML = `<strong>${song.title}</strong><br>by ${song.artist}<br>`;
+      const button = document.createElement("button");
+      button.className = "vote-button";
+      const voteText = document.createElement("div");
+      voteText.className = "vote-count";
+
+      button.textContent = voteCount >= 10 ? "Max 10 votes" : "Vote";
+      voteText.textContent = `You voted: ${voteCount} / 10`;
+
+      if (voteCount >= 10) {
+        button.disabled = true;
+      }
+
+      button.onclick = () => {
+        let count = getVoteCount(song.id);
+        if (count >= 10) return;
+        count++;
+        setVoteCount(song.id, count);
+        voteText.textContent = `You voted: ${count} / 10`;
+        if (count >= 10) {
+          button.textContent = "Max 10 votes";
+          button.disabled = true;
+        }
+      };
+
+      container.innerHTML = titleHTML;
+      container.appendChild(button);
+      container.appendChild(voteText);
+      songListDiv.appendChild(container);
+    });
+  </script>
+</body>
+</html>
